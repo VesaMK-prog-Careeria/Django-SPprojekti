@@ -1,0 +1,36 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<div class="card" style="width: 25rem;">
+    <div class="card-header">
+        <h5>Editing {{product.productname}} supplied by {{product.supplier.companyname}}</h5>
+
+        <div class="card-body">
+            <form method="post" action="/edit-product-post/{{product.id}}/">
+                {% csrf_token %}
+                <label for="productname">Product name</label>
+                <input type="text" class="form-control" name="productname" value="{{product.productname}}">
+                <label for="packagesize">Package size</label>
+                <input type="text" class="form-control" name="packagesize" value="{{product.packagesize}}">
+                <label for="unitprice">Unit price</label>
+                <input type="number" step=".01" class="form-control" name="unitprice" value="{{product.unitprice}}">
+                <label for="unitsinstock">Units in stock</label>
+                <input type="text" class="form-control" name="unitsinstock" value="{{product.unitsinstock}}">
+                <br />
+                <label for="supplier">Supplier</label>
+                <select id="supplier" name="supplier">
+                    {% for s in suppliers %}
+                    <option value="{{s.id}}" {% if s.id == product.supplier.id %} selected {% endif %}>{{s.companyname}}</option>
+                    {% endfor %}
+                </select>
+                <br />
+                <br />
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancel</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

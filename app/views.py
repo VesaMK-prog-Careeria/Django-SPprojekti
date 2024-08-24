@@ -24,6 +24,31 @@ def addproduct(request):
     Product(productname = a, packagesize = b, unitprice = c, unitsinstock = d, supplier = Supplier.objects.get(id = e)).save()
     return redirect(request.META['HTTP_REFERER'])
 
+def confirmdeleteproduct(request, id):
+    product = Product.objects.get(id = id)
+    context = {'product': product}
+    return render(request, 'confirmdelprod.html', context)
+
+def deleteproduct(request, id):
+    Product.objects.get(id = id).delete()
+    return redirect(productlistview)
+
+def editproduct_get(request, id):
+    product = Product.objects.get(id = id)
+    supplierlist = Supplier.objects.all()
+    context = {'product': product, 'suppliers': supplierlist}
+    return render(request, 'edit_prod.html', context)
+
+def editproduct_post(request, id):
+    product = Product.objects.get(id = id)
+    product.productname = request.POST['productname']
+    product.packagesize = request.POST['packagesize']
+    product.unitprice = request.POST['unitprice']
+    product.unitsinstock = request.POST['unitsinstock']
+    product.supplier = Supplier.objects.get(id = request.POST['supplier'])
+    product.save()
+    return redirect(productlistview)
+
 # Supplier view
 # Supplier modelin tuonti
 def supplierlistview(request):
@@ -40,3 +65,12 @@ def addsupplier(request):
     f = request.POST['country']
     Supplier(companyname = a, contactname = b, address = c, phone = d, email = e, country = f).save()
     return redirect(request.META['HTTP_REFERER'])
+
+def confirmdeletesupplier(request, id):
+    supplier = Supplier.objects.get(id = id)
+    context = {'supplier': supplier}
+    return render(request, 'confirmdelsupp.html', context)
+
+def deletesupplier(request, id):
+    Supplier.objects.get(id = id).delete()
+    return redirect(supplierlistview)
