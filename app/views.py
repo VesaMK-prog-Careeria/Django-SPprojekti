@@ -81,6 +81,24 @@ def addsupplier(request):
     Supplier(companyname = a, contactname = b, address = c, phone = d, email = e, country = f).save()
     return redirect(request.META['HTTP_REFERER'])
 
+#region Vaihtoehtoinen tapa lisätä Supplier
+# from django.forms import ModelForm
+# from .models import Supplier
+# class SupplierForm(ModelForm):
+#     class Meta:
+#         model = Supplier
+#         fields = '__all__' #or put the fields you want in list
+
+
+# def addsupplier(request):
+#     form = SupplierForm(request.POST or None)
+#     if(form.is_valid()):
+#         form.save() 
+#         return redirect(request.META['HTTP_REFERER'])
+#     else:
+#         return render(request, 'template', context)
+#endregion
+
 def searchsupplier(request):
     search = request.POST['search']
     supplierlist = Supplier.objects.filter(companyname__contains = search) #icontains = case insensitive, contains = case sensitive
