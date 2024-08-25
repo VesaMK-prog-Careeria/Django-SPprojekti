@@ -1,45 +1,47 @@
 {% extends 'index.html' %}
 
 {% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <br />
+            <div id="add-div"></div>
+            <br />
+            <h1>Products</h1>
+            <a onclick="showaddform()" class="btn btn-primary">Add new</a>
+            <br />
+            <br />
+            <form method="post" action="/search-product/">
+                {%csrf_token %}
+                <input type="text" name="search" placeholder="Search product">
+                <input type="submit" value="Search" class="btn btn-primary btn-sm">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="clearSearch()">Clear</button>
+            </form>
+            <br />
+            {% for p in products %}
+            <div class="card" style="width: 50rem;">
+                <div class="card-body">
+                    <h4 class="card-title">{{p.productname}} </h4>
+                    <h5 class="card-text">Supplier: {{p.supplier.companyname}}</h5>
+                    <p class="card-text">packagesize: {{p.packagesize}} | unitprice: {{p.unitprice}}</p>
+                    <p class="card-text" style="color: green;">Units in stock: {{p.unitsinstock}}</p>
+                    
+                    <a href="/edit-product-get/{{p.id}}/" class="btn btn-primary">Edit</a>
+                    <a href="/confirm-delete-product/{{p.id}}/" class="btn btn-danger">Delete</a>
+                    <a href="/products-by-supplier/{{p.supplier.id}}/" class="btn btn-secondary">{{p.supplier.companyname}}´s all Products</a>
+                </div>
+            </div>
+            {% empty %}
 
-<br />
-<!-- Lisäyslomakkeen paikka -->
-<div id="add-div"></div>
-<br />
-
-<h1>Products</h1>
-
-<a onclick="showaddform()" class="btn btn-primary">Add new</a>
-
-{% for p in products %}
-
-<div class="card" style="width: 50rem;">
-    <div class="card-body">
-        <h3 class="card-title">{{p.productname}} </h3>
-        <h5 class="card-text">Supplier: {{p.supplier.companyname}}</h5>
-        <p class="card-text">packagesize: {{p.packagesize}} | unitprice: {{p.unitprice}}</p>
-        <p class="card-text" style="color: green;">Units in stock: {{p.unitsinstock}}</p>
-        
-        <a href="/edit-product-get/{{p.id}}/" class="btn btn-primary">Edit</a>
-
-        <a href="/confirm-delete-product/{{p.id}}/" class="btn btn-danger">Delete</a>
-
-        <a href="/products-by-supplier/{{p.supplier.id}}/" class="btn btn-secondary">{{p.supplier.companyname}}´s all
-            Products</a>
-
+            <div class="card" style="width: 50rem;">
+                <div class="card-body">
+                    <p class="card-text">No products found in the database </p>
+                </div>
+            </div>
+            {%endfor%}
+        </div>
     </div>
 </div>
-
-
-{% empty %}
-
-<div class="card" style="width: 50rem;">
-    <div class="card-body">
-        <p class="card-text">No products found in the database </p>
-    </div>
-</div>
-
-{%endfor%}
 
 
 <script>
@@ -76,6 +78,11 @@
 
     function hideaddform() {
         document.getElementById("add-div").innerHTML = ""
+    }
+
+    function clearSearch() {
+        document.querySelector('input[name="search"]').value = '';
+        document.querySelector('form').submit();
     }
 
 </script>

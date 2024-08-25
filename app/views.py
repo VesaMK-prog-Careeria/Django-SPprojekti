@@ -6,7 +6,7 @@ from .models import Supplier, Product # . tarkoittaa nykyistä hakemistoa
 def landingview(request):
     return render(request, 'landingpage.html')
 
-# Product view
+# --------------------------------------------------Product view
 # Product modelin tuonti
 def productlistview(request):
     productlist = Product.objects.all()
@@ -14,6 +14,7 @@ def productlistview(request):
     context = {'products': productlist, 'suppliers': supplierlist}
     return render (request,"productlist.html",context)
 
+#region Add, delete, edit product
 def addproduct(request):
     a = request.POST['productname']
     b = request.POST['packagesize']
@@ -23,6 +24,12 @@ def addproduct(request):
     
     Product(productname = a, packagesize = b, unitprice = c, unitsinstock = d, supplier = Supplier.objects.get(id = e)).save()
     return redirect(request.META['HTTP_REFERER'])
+
+def searchproduct(request):
+    search = request.POST['search']
+    productlist = Product.objects.filter(productname__contains = search) #icontains = case insensitive, contains = case sensitive
+    context = {'products': productlist}
+    return render(request, 'productlist.html', context)
 
 def confirmdeleteproduct(request, id):
     product = Product.objects.get(id = id)
@@ -49,13 +56,21 @@ def editproduct_post(request, id):
     product.save()
     return redirect(productlistview)
 
-# Supplier view
+def suppliers_products(request, id):
+    supplier = Supplier.objects.get(id = id)
+    products = Product.objects.filter(supplier = supplier)
+    context = {'supplier': supplier, 'products': products}
+    return render(request, 'productlist.html', context)
+#endregion
+
+# --------------------------------------------------Supplier view
 # Supplier modelin tuonti
 def supplierlistview(request):
     supplierlist = Supplier.objects.all()
     context = {'suppliers': supplierlist}
     return render (request,"supplierlist.html",context)
 
+#region Add, delete, edit supplier
 def addsupplier(request):
     a = request.POST['companyname']
     b = request.POST['contactname']
@@ -66,6 +81,12 @@ def addsupplier(request):
     Supplier(companyname = a, contactname = b, address = c, phone = d, email = e, country = f).save()
     return redirect(request.META['HTTP_REFERER'])
 
+def searchsupplier(request):
+    search = request.POST['search']
+    supplierlist = Supplier.objects.filter(companyname__contains = search) #icontains = case insensitive, contains = case sensitive
+    context = {'suppliers': supplierlist}
+    return render(request, 'supplierlist.html', context)
+
 def confirmdeletesupplier(request, id):
     supplier = Supplier.objects.get(id = id)
     context = {'supplier': supplier}
@@ -74,3 +95,20 @@ def confirmdeletesupplier(request, id):
 def deletesupplier(request, id):
     Supplier.objects.get(id = id).delete()
     return redirect(supplierlistview)
+
+def editsupplier_get(request, id):
+    supplier = Supplier.objects.get(id = id)
+    context = {'supplier': supplier}
+    return render(request, 'edit_supp.html', context)
+
+def editsupplier_post(request, id):
+    supplier = Supplier.objects.get(id = id)
+    supplier.companyname = request.POST['companyname']
+    supplier.contactname = request.POST['contactname']
+    supplier.address = request.POST['address']
+    supplier.phone = request.POST['phone']
+    supplier.email = request.POST['email']
+    supplier.country = request.POST['country']
+    supplier.save()
+    return redirect(supplierlistview)
+#endregion
