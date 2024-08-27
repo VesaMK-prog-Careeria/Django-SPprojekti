@@ -1,12 +1,19 @@
 # Tällä sivulla on URL-osoitteet, jotka ohjaavat käyttäjän
 # oikeaan näkymään. Tämä on ns. reititys.
 from django.urls import path
-from .views import landingview, productlistview, supplierlistview, addsupplier, addproduct, \
+from .views import productlistview, supplierlistview, addsupplier, addproduct, \
      confirmdeleteproduct, deleteproduct, confirmdeletesupplier, deletesupplier, editproduct_get, editproduct_post, \
-        editsupplier_get, editsupplier_post, searchsupplier, searchproduct, suppliers_products
+        editsupplier_get, editsupplier_post, searchsupplier, searchproduct, suppliers_products, \
+        loginview, login_action, logout_action
 
 urlpatterns = [
-    path('', landingview),
+    #path('landing/', landingview),
+
+    # login URL
+    path('', loginview),
+    path('login/', login_action),
+    path('logout/', logout_action),
+
     # products URL
     path('products/', productlistview),
     path('add-product/', addproduct),
