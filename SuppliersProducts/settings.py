@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import dj_database_url # Lisätty dj_database_url moduuli
+import os # Lisätty os moduuli
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ecn@_tvq^ptha_=e0%j$6s!h%*6a_4d@mb6=o)1pq!q!mds2lf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False #True kun kehitetään, False kun tuotannossa eli renderiin False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*'] # Add the allowed hosts setting to allow all hosts add '*'
 
 
 # Application definition
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Add the WhiteNoise middleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -82,6 +84,7 @@ DATABASES = {
 }
 '''
 
+'''
 # Lokaali tietokanta
 DATABASES = {
     'default': {
@@ -92,6 +95,15 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '5432'
     }
+}
+'''
+# Render käytössä
+DATABASES = {
+    'default': dj_database_url.config(
+        # Replace this value with your local database's connection string.
+        default='postgresql://postgres:postgres@localhost:5432/suppliersdb', #suppliersdb mikä tulee olemaan tietokannan nimi renderissä
+        conn_max_age=600
+    )
 }
 
 # Password validation
@@ -128,7 +140,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+if not DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
